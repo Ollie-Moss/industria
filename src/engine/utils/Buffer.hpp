@@ -5,17 +5,18 @@
 #include <cstddef>
 #include <initializer_list>
 #include <vector>
+#include <iostream>
 
 struct Buffer {
 	unsigned int ID;
 
 	Buffer() {
-		glCreateBuffers(1, &ID);
+		glGenBuffers(1, &ID);
 	}
 
 	template <typename T>
 	Buffer(std::initializer_list<T> buf) : Buffer() {
-        Fill(buf);
+		Fill<T>(buf);
 	}
 
 	~Buffer() {

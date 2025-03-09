@@ -2,14 +2,16 @@
 #include "engine/ecs/components/Renderer.hpp"
 
 int main() {
+	Simplex::CreateWindow("Industria", 1280, 720);
+
 	Scene main = Scene();
 	main.CreateScene([&]() {
 		Entity tile = Entity();
-		tile.AddComponent(new Renderer(Quad()));
+		tile.AddComponent(new Renderer());
 		main.entities.push_back(tile);
 	});
+	Simplex::SetScene(main);
 
-	Simplex::CreateWindow("Industria", 1280, 720);
 	Simplex::Loop();
 
 	return 0;

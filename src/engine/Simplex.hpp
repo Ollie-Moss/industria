@@ -20,6 +20,8 @@ void Quit();
 
 void Loop();
 
+void SetScene(Scene scene);
+
 } // namespace Simplex
 
 #endif

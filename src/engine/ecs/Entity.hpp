@@ -15,7 +15,8 @@ class Entity {
 	};
 
 	void UpdateComponents() {
-		for (auto *component : Components) {
+		for (int i = 0; i < Components.size(); i++) {
+			IComponent *component = Components[i];
 			component->Update();
 		}
 	};

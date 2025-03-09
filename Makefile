@@ -24,7 +24,7 @@ OBJ_FILES := $(OBJ_FILES:%.c=$(BUILD_DIR)/%.o)
 OBJ_FILE_NAMES = $(foreach obj,$(OBJ_FILES),$(BUILD_DIR)/$(notdir $(obj)))
 
 # Rule to create the final target (executable)
-$(TARGET): $(OBJ_FILES)
+$(TARGET): clean $(OBJ_FILES)
 	$(CXX) $(BUILD_DIR)/*.o $(LINK) -o $(TARGET)
 	./$(TARGET)
 
@@ -37,5 +37,5 @@ $(BUILD_DIR)/%.o: %.c
 	$(CXX) $(CXXFLAGS) -c $< -o $(BUILD_DIR)/$(notdir $@)
 
 # Clean rule to remove the build directory and executable
-clean: $(TARGET)
-	rm -rf $(BUILD_DIR) $(TARGET)
+clean:
+	rm -rf $(BUILD_DIR)/* $(TARGET)
