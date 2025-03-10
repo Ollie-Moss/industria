@@ -53,4 +53,14 @@ struct Quad : Model {
 	}
 };
 
+struct Triangle : Model {
+	Buffer vert, tex;
+	Triangle() : Model({"in_vert", "in_tex"}),
+				 vert({0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f}),
+				 tex({0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f}) {
+		Bind<glm::vec2>("in_vert", &vert);
+		Bind<glm::vec2>("in_tex", &tex);
+		SIZE = 3;
+	}
+};
 #endif

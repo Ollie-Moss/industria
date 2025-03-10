@@ -9,9 +9,9 @@
 #include <glm/glm.hpp>
 
 struct Renderer : IComponent {
-	Quad model = Quad();
+	Model* model;
 
-	Renderer() {};
+	Renderer(Model* model) : model(model) {};
 	void Update() override {
 		Shader shader = ResourceManager::GetShader("QuadShader");
 		shader.use();
@@ -21,7 +21,7 @@ struct Renderer : IComponent {
 
 		shader.setMat4("projection", projection);
 
-		model.Render();
+		model->Render();
 	}
 };
 
