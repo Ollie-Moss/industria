@@ -1,8 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "IComponent.hpp"
 #include <vector>
+#include "IComponent.hpp"
 
 class Entity {
   public:
@@ -10,16 +10,12 @@ class Entity {
 
 	std::vector<IComponent *> Components;
 
-	void AddComponent(IComponent *component) {
-		Components.push_back(component);
-	};
+	void AddComponent(IComponent *component);
 
-	void UpdateComponents() {
-		for (int i = 0; i < Components.size(); i++) {
-			IComponent *component = Components[i];
-			component->Update();
-		}
-	};
+	template <typename T>
+	IComponent *GetComponent();
+
+	void UpdateComponents();
 };
 
 #endif

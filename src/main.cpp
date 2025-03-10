@@ -1,5 +1,6 @@
 #include "engine/Simplex.hpp"
 #include "engine/ecs/components/Renderer.hpp"
+#include "engine/ecs/components/Transform.hpp"
 #include "engine/utils/Model.hpp"
 
 int main() {
@@ -8,6 +9,10 @@ int main() {
 	Scene main = Scene();
 	main.CreateScene([&]() {
 		Entity tile = Entity();
+		Transform *transform = new Transform;
+		transform->Position.x += 5.0f;
+		tile.AddComponent(transform);
+
 		tile.AddComponent(new Renderer(new Quad));
 		main.entities.push_back(tile);
 	});

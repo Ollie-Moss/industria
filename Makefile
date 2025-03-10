@@ -6,7 +6,7 @@ LINK = -lfreetype -lGL -lglfw -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXin
 
 # Define compiler flags
 CFLAGS = -Wall
-CXXFLAGS = -std=c++17
+CXXFLAGS = -std=c++17 -Wall
 
 # Define the build directory and target executable
 BUILD_DIR = build
