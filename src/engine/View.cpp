@@ -50,3 +50,10 @@ bool View::ShouldQuit() {
 void View::Quit() {
 	glfwTerminate();
 }
+
+glm::vec2 View::GetMousePosition() {
+	double mouseX, mouseY;
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+	glm::vec2 mousePos = glm::vec2((float)mouseX, Height - (float)mouseY);
+    return mousePos;
+}

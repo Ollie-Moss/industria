@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <vector>
-#include <
 #include "IComponent.hpp"
 
 class Entity {
@@ -13,6 +12,11 @@ class Entity {
 	std::vector<IComponent *> Components;
 
 	void AddComponent(IComponent *component);
+	void AddComponents(std::initializer_list<IComponent *> components) {
+		for (auto *component : components) {
+			AddComponent(component);
+		}
+	};
 
 	template <typename T>
 	T *GetComponent() {
@@ -26,6 +30,7 @@ class Entity {
 		return nullptr;
 	};
 
+	void StartComponents();
 	void UpdateComponents();
 };
 

@@ -10,9 +10,11 @@
 
 namespace Simplex {
 
-static View view;
-static Input input;
-static Scene currentScene;
+extern View view;
+extern Input input;
+extern Scene currentScene;
+
+extern bool firstLoop;
 
 void CreateWindow(std::string title, int width, int height);
 

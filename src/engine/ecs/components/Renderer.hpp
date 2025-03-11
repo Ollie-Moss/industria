@@ -2,36 +2,49 @@
 #define RENDERER_H
 
 #include "../IComponent.hpp"
-#include "Transform.hpp"
 #include "../../utils/Model.hpp"
 #include "../../ResourceManager.hpp"
 #include "../../utils/Shader.hpp"
-#include <iostream>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/glm.hpp>
-#include "../Entity.hpp"
+#include "../../utils/SSBOBuffer.hpp"
 #include "../../Simplex.hpp"
+#include "Camera.hpp"
+
+struct bigModel : Model {
+	SSBO<unsigned int> ssbo;
+	bigModel() : Model(), ssbo(SSBO<unsigned int>()) {
+		ssbo.Bind();
+	};
+	void fillSSBO(std::vector<unsigned int> buf) {
+		ssbo.Fill(buf);
+		SIZE = ssbo.size / 2 * 6;
+	}
+};
 
 struct Renderer : IComponent {
-	Model *model;
+	bigModel model = bigModel();
 
-	Renderer(Model *model) : model(model) {};
+	Renderer() {};
 	void Update() override {
-		Shader shader = ResourceManager::GetShader("QuadShader");
+		Shader shader = ResourceManager::GetShader("SpriteShader");
 		shader.use();
 
+		glm::mat4 projection = glm::mat4(1.0f);
+		if (Simplex::view.Camera != nullptr) {
+			projection = Simplex::view.Camera->GetComponent<Camera>()->CalculateProjection();
+		}
+
 		shader.setVec4("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-		glm::mat4 projection = glm::ortho(0.0f, 19.2f, 0.0f, 10.8f, -100.0f, 100.0f);
 
 		shader.setMat4("projection", projection);
 
-		Transform *transform = entity->GetComponent<Transform>();
-		glm::vec3 pos = transform->Position;
-		std::vector<float> vertices = {pos.x, pos.y, pos.x, pos.y + 1.0f, pos.x + 1.0f, pos.y, pos.x + 1.0f, pos.y + 1.0f};
-		model->bindings["in_vert"]->Fill(vertices);
-
-		model->Render();
+		glActiveTexture(GL_TEXTURE0);
+		ResourceManager::GetTexture("GRASS_TILE_1").Bind();
+		model.Render(GL_TRIANGLES);
+		glBindTexture(GL_TEXTURE0, 0);
 	}
 };
 

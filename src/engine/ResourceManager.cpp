@@ -31,6 +31,36 @@ void ResourceManager::Init() {
 
 	LoadShader("src/engine/utils/shaders/vQuadShader.glsl",
 			   "src/engine/utils/shaders/fQuadShader.glsl", "QuadShader");
+
+    // Buildings
+	ResourceManager::LoadTexture("CONVEYOR_STRAIGHT", 1.0f, "sprites/conveyors/conveyor_straight_up.png");
+	ResourceManager::LoadTexture("FURNACE_SMALL", 1.0f, "sprites/buildings/furnace.png");
+	ResourceManager::LoadTexture("FURNACE", 1.0f, "sprites/buildings/furnace_large.png");
+	ResourceManager::LoadTexture("INSERTER", 1.0f, "sprites/buildings/inserter.png");
+
+    // UI
+	ResourceManager::LoadTexture("INVENTORY_BACKGROUND", 1.0f, "sprites/UI/inventory_background.png");
+	ResourceManager::LoadTexture("INVENTORY_SLOT", 1.0f, "sprites/UI/inventory_slot.png");
+	ResourceManager::LoadTexture("TILE_SELCTOR", 1.0f, "sprites/UI/tile_selector.png");
+
+    // Items
+	ResourceManager::LoadTexture("IRON_ORE_ITEM", 1.0f, "sprites/items/iron_ore.png");
+	ResourceManager::LoadTexture("COPPER_ORE_ITEM", 1.0f, "sprites/items/copper_ore.png");
+	ResourceManager::LoadTexture("COAL_ITEM", 1.0f, "sprites/items/coal.png");
+	ResourceManager::LoadTexture("LEAVES_ITEM", 1.0f, "sprites/items/leaves.png");
+	ResourceManager::LoadTexture("IRON_PLATE_ITEM", 1.0f, "sprites/items/iron_plate.png");
+	ResourceManager::LoadTexture("COPPER_PLATE_ITEM", 1.0f, "sprites/items/copper_plate.png");
+	ResourceManager::LoadTexture("GEARS_ITEM", 1.0f, "sprites/items/gears.png");
+	ResourceManager::LoadTexture("WIRE_ITEM", 1.0f, "sprites/items/wire.png");
+	ResourceManager::LoadTexture("CIRCUIT_BOARDS_ITEM", 1.0f, "sprites/items/circuit_board.png");
+
+    // Environment
+	ResourceManager::LoadTexture("TREE", 1.0f, "sprites/environment/tree.png");
+	ResourceManager::LoadTexture("TILE_SELCTOR", 1.0f, "sprites/environment/grass.png");
+
+    // Tiles
+	ResourceManager::LoadTexture("GRASS_TILE_1", 1.0f, "sprites/tiles/grass_tile_1.png");
+	ResourceManager::LoadTexture("GRASS_TILE_2", 1.0f, "sprites/tiles/grass_tile_2.png");
 };
 
 Shader ResourceManager::GetShader(std::string name) {

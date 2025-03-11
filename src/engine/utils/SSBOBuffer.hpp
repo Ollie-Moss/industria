@@ -1,39 +1,30 @@
 #ifndef SSBO_H
 #define SSBO_H
 
+#include "Buffer.hpp"
 #include "glad/glad.h"
 #include <vector>
 
-struct SsboBuffer {
+template <typename T>
+struct SSBO {
 	unsigned int ID;
-
-	SsboBuffer() {
-		glGenBuffers(1, &ID);
+	size_t size = 0;
+	SSBO() {
+		glCreateBuffers(1, &ID);
 	}
 
-	template <typename T>
-	SsboBuffer(std::initializer_list<T> buf) : Buffer() {
-		Fill<T>(buf);
-	}
-
-	~SsboBuffer() {
-		glDeleteBuffers(1, &ID);
-	}
-
-	template <typename T>
 	void Fill(std::vector<T> buf) {
-		Fill(buf.size(), &buf[0]);
+		size = buf.size();
+		glNamedBufferStorage(ID, buf.size() * sizeof(T), buf.data(), GL_DYNAMIC_STORAGE_BIT);
 	}
-	template <typename T>
-	void Fill(size_t size, T *data) {
-		glBindBuffer(GL_ARRAY_BUFFER, ID);
-		glBufferData(GL_ARRAY_BUFFER, size * sizeof(T), data, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	void Set(int index, T value) {
+		glNamedBufferSubData(ID, index, sizeof(T), &value);
 	}
-	template <typename T>
-	void Fill(T value) {
-		Fill(1, &value);
+
+	void Bind() {
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ID);
 	}
-}
+};
 
 #endif
