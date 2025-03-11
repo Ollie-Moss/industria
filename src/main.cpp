@@ -8,12 +8,12 @@ int main() {
 
 	Scene main = Scene();
 	main.CreateScene([&]() {
-		Entity tile = Entity();
-		Transform *transform = new Transform;
+		Entity* tile = new Entity();
+		Transform *transform = new Transform();
 		transform->Position.x += 5.0f;
-		tile.AddComponent(transform);
+		tile->AddComponent(transform);
 
-		tile.AddComponent(new Renderer(new Quad));
+		tile->AddComponent(new Renderer(new Quad));
 		main.entities.push_back(tile);
 	});
 

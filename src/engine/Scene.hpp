@@ -6,7 +6,7 @@
 
 class Scene {
   public:
-	std::vector<Entity> entities;
+	std::vector<Entity*> entities;
 
 	void Update();
 

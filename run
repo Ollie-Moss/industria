@@ -1,0 +1,5 @@
+rm -rf build/* build.exec 
+g++ -std=c++17 -Wall -c src/engine/Scene.cpp -o build/Scene.o
+g++ -std=c++17 -Wall -c src/engine/ResourceManager.cpp -o build/ResourceManager.o
+g++ -std=c++17 -Wall -c src/engine/utils/Texture.cpp -o build/Texture.o
+g++ -std=c++17 -Wall -c src/engine/Simplex.cpp -o build/Simplex.o
