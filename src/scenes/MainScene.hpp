@@ -17,7 +17,6 @@ struct MainScene : public Scene {
 		CreateScene([&]() {
 
 			ENTITY(tile, new Renderer, new MapGenerator(100, 100));
-
 			ENTITY(cameraEntity, new Transform, new Camera);
 		});
 	}
