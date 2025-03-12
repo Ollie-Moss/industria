@@ -12,6 +12,7 @@
 #include "../../utils/SSBOBuffer.hpp"
 #include "../../Simplex.hpp"
 #include "Camera.hpp"
+#include "../../Userinterface.hpp"
 
 struct bigModel : Model {
 	SSBO<unsigned int> ssbo;
@@ -26,6 +27,7 @@ struct bigModel : Model {
 
 struct Renderer : IComponent {
 	bigModel model = bigModel();
+    UI *ui = testUserinterface();
 
 	Renderer() {};
 	void Update() override {
@@ -45,6 +47,8 @@ struct Renderer : IComponent {
 		ResourceManager::GetTexture("GRASS_TILE_1").Bind();
 		model.Render(GL_TRIANGLES);
 		glBindTexture(GL_TEXTURE0, 0);
+
+        ui->Render();
 	}
 };
 

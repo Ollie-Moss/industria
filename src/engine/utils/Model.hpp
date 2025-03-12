@@ -2,6 +2,12 @@
 #define MODEL_H
 
 #include "Buffer.hpp"
+#include "../ResourceManager.hpp"
+#include "Shader.hpp"
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/vector_float2.hpp>
+#include <glm/ext/vector_float4.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <map>
 #include <string>
 #include <glm/glm.hpp>
@@ -50,6 +56,21 @@ struct Quad : Model {
 		Bind<glm::vec2>("in_vert", &vert);
 		Bind<glm::vec2>("in_tex", &tex);
 		SIZE = 4;
+	}
+	void Render(glm::vec2 position, glm::vec2 size, glm::vec4 color) {
+		std::vector<float> vertices = {position.x, position.y,			//
+									   position.x, position.y + size.y, //
+									   position.x + size.x, position.y, //
+									   position.x + size.x, position.y + size.y};
+		vert.Fill(vertices);
+		Bind<glm::vec2>("in_vert", &vert);
+		Shader shader = ResourceManager::GetShader("QuadShader");
+        shader.use();
+		glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 1920.0f, -100.0f, 100.0f);
+
+		shader.setVec4("color", color);
+		shader.setMat4("projection", projection);
+		Model::Render();
 	}
 };
 
