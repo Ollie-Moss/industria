@@ -2,7 +2,7 @@
 #include "scenes/MainScene.hpp"
 
 int main() {
-	Simplex::CreateWindow("Industria", 1280, 720);
+	Simplex::CreateWindow("Industria", 1280-190, 720-160);
 
 	Simplex::SetScene(MainScene());
 

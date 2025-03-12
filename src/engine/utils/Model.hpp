@@ -11,6 +11,7 @@
 #include <map>
 #include <string>
 #include <glm/glm.hpp>
+#include "../Simplex.hpp"
 
 struct Model {
 	unsigned int vao;
@@ -66,7 +67,7 @@ struct Quad : Model {
 		Bind<glm::vec2>("in_vert", &vert);
 		Shader shader = ResourceManager::GetShader("QuadShader");
         shader.use();
-		glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 1920.0f, -100.0f, 100.0f);
+		glm::mat4 projection = glm::ortho(0.0f, (float)Simplex::view.Width, (float)Simplex::view.Height, 0.0f, -100.0f, 100.0f);
 
 		shader.setVec4("color", color);
 		shader.setMat4("projection", projection);

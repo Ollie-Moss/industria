@@ -2,6 +2,7 @@
 #define USERINTERFACE_H
 
 #include "Input.hpp"
+#include <algorithm>
 #include <cstdint>
 #include "utils/Model.hpp"
 #include <glm/ext/vector_float2.hpp>
@@ -60,7 +61,7 @@ struct SIZING {
 
 struct UIElementProperties {
 	ELEMENT_TYPE type = ELEMENT_RECTANGLE;
-	LAYOUT_DIRECTION direction = DIRECTION_HORIZONTAL;
+	LAYOUT_DIRECTION layoutDirection = DIRECTION_HORIZONTAL;
 	SIZING sizing = {FIT(), FIT()};
 	Padding padding = {0, 0, 0, 0};
 	float childGap = 0;
@@ -84,29 +85,58 @@ class UI {
 
   public:
 	UI() {}
+	UI(UIElementProperties props) : Root(CreateElem(props)) {}
 
-	void OpenElement(UIElementProperties properties) {
+	static UIElement CreateElem(UIElementProperties properties) {
 		UIElement elem = {
 			.properties = properties,
 		};
+		if (elem.properties.sizing.xAxis.type == SIZING_TYPE_FIXED) {
+			elem.size.x = elem.properties.sizing.xAxis.minMax.max;
+		}
+		if (elem.properties.sizing.yAxis.type == SIZING_TYPE_FIXED) {
+			elem.size.y = elem.properties.sizing.yAxis.minMax.max;
+		}
+		return elem;
+	}
+
+	void OpenElement(UIElementProperties properties) {
+		UIElement elem = CreateElem(properties);
 
 		currentElement->children.push_back(elem);
 		currentElement->children.back().parent = currentElement;
 		currentElement = &currentElement->children.back();
 	};
 	void CloseElement() {
-
-		if (currentElement->properties.sizing.xAxis.type == SIZING_TYPE_FIXED) {
-			currentElement->size.x = currentElement->properties.sizing.xAxis.minMax.max;
-		}
-		if (currentElement->properties.sizing.yAxis.type == SIZING_TYPE_FIXED) {
-			currentElement->size.y = currentElement->properties.sizing.yAxis.minMax.max;
-		}
+		CalculateFitSizingWidths(currentElement);
+		CalculateFitSizingHeights(currentElement);
 		currentElement = currentElement->parent;
-	};
+	}
 
-	void CalculateFitSizingWidths() {}
-	void CalculateFitSizingHeights() {}
+	void CalculateFitSizingWidths(UIElement *elem) {
+		UIElement *parent = elem->parent;
+		Padding padding = elem->properties.padding;
+		elem->size.x += padding.left + padding.right;
+
+		if (parent->properties.layoutDirection == DIRECTION_HORIZONTAL) {
+			parent->size.x += elem->size.x;
+		}
+		if (parent->properties.layoutDirection == DIRECTION_VERTICAL) {
+			parent->size.x = std::max(parent->size.x, elem->size.x);
+		}
+	}
+	void CalculateFitSizingHeights(UIElement *elem) {
+		UIElement *parent = elem->parent;
+		Padding padding = elem->properties.padding;
+		elem->size.y += padding.top + padding.bottom;
+
+		if (parent->properties.layoutDirection == DIRECTION_HORIZONTAL) {
+			parent->size.y = std::max(parent->size.y, elem->size.y);
+		}
+		if (parent->properties.layoutDirection == DIRECTION_VERTICAL) {
+			parent->size.y += elem->size.y;
+		}
+	}
 
 	void CalculateGrowAndShrinkSizingWidths() {}
 	void CalculateGrowAndShrinkSizingHeights() {}
@@ -116,34 +146,36 @@ class UI {
 	void CalculatePositions() {}
 
 	void UpdateLayout() {
-		CalculateFitSizingWidths();
-		CalculateGrowAndShrinkSizingWidths();
-		WrapText();
-
-		CalculateFitSizingHeights();
-		CalculateGrowAndShrinkSizingHeights();
-
-		CalculatePositions();
+		// CalculateFitSizingWidths();
+		// CalculateGrowAndShrinkSizingWidths();
+		// WrapText();
+		//
+		// CalculateFitSizingHeights();
+		// CalculateGrowAndShrinkSizingHeights();
+		//
+		// CalculatePositions();
 	}
 
-	void RenderElementChildren(UIElement elem) {
+	void RenderElementChildren(UIElement elem, glm::vec2 positionOffset) {
+		float leftOffset = elem.properties.padding.left;
 		if (elem.children.empty())
 			return;
 
 		for (auto child : elem.children) {
-			glm::vec2 childPosition = elem.position + child.position;
-			childPosition.x += elem.properties.padding.left;
+			glm::vec2 childPosition = elem.position + child.position + positionOffset;
+			childPosition.x += leftOffset;
 			childPosition.y += elem.properties.padding.top;
 
 			Quad quad = Quad();
 			quad.Render(childPosition, child.size, child.properties.backgroundColor);
-
-			RenderElementChildren(child);
+			leftOffset += child.size.x + elem.properties.childGap;
+			RenderElementChildren(child, childPosition);
 		}
 	}
 
 	void Render() {
-		RenderElementChildren(Root);
+		Quad quad = Quad();
+		RenderElementChildren(Root, Root.position);
 	};
 };
 
@@ -160,12 +192,18 @@ static int ELEMENT_DEFINITION_LATCH;
 
 UI *testUserinterface() {
 	USERINTERFACE(testUI, ELEMENT({
-							  .sizing = {FIXED(1000), FIXED(1000)},
-							  .padding = {.top = 10.0f, .left = 10.0f},
+							  .padding = {20.0f, 20.0f, 20.0f, 20.0f},
+							  .childGap = 20.0f,
 							  .backgroundColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
 						  }) { ELEMENT({
-								   .sizing = {FIXED(500), FIXED(500)},
+								   .sizing = {FIXED(100), FIXED(50)},
 								   .backgroundColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
+
+							   }); 
+                                ELEMENT({
+								   .sizing = {FIXED(100), FIXED(50)},
+								   .backgroundColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
+
 							   }); })
 
 	return testUI;
