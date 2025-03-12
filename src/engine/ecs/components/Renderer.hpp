@@ -27,7 +27,6 @@ struct bigModel : Model {
 
 struct Renderer : IComponent {
 	bigModel model = bigModel();
-    UI *ui = testUserinterface();
 
 	Renderer() {};
 	void Update() override {
@@ -48,7 +47,6 @@ struct Renderer : IComponent {
 		model.Render(GL_TRIANGLES);
 		glBindTexture(GL_TEXTURE0, 0);
 
-        ui->Render();
 	}
 };
 

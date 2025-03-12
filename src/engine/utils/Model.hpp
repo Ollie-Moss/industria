@@ -3,6 +3,7 @@
 
 #include "Buffer.hpp"
 #include "../ResourceManager.hpp"
+#include "SSBOBuffer.hpp"
 #include "Shader.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/vector_float2.hpp>
@@ -11,6 +12,7 @@
 #include <map>
 #include <string>
 #include <glm/glm.hpp>
+#include <unordered_map>
 #include "../Simplex.hpp"
 
 struct Model {
@@ -66,7 +68,7 @@ struct Quad : Model {
 		vert.Fill(vertices);
 		Bind<glm::vec2>("in_vert", &vert);
 		Shader shader = ResourceManager::GetShader("QuadShader");
-        shader.use();
+		shader.use();
 		glm::mat4 projection = glm::ortho(0.0f, (float)Simplex::view.Width, (float)Simplex::view.Height, 0.0f, -100.0f, 100.0f);
 
 		shader.setVec4("color", color);
@@ -83,6 +85,29 @@ struct Triangle : Model {
 		Bind<glm::vec2>("in_vert", &vert);
 		Bind<glm::vec2>("in_tex", &tex);
 		SIZE = 3;
+	}
+};
+
+struct ChunkModel : Model {
+	std::unordered_map<std::string, SSBO<unsigned int>> buffers;
+	ChunkModel() : Model() {};
+
+	void Fill(std::string texture, std::vector<unsigned int> buf) {
+		buffers[texture].Fill(buf);
+	}
+	void Set(std::string texture, int index, unsigned int value) {
+		buffers[texture].Set(index, value);
+	}
+
+	void Render() {
+		for (auto &pair : buffers) {
+			std::string textureName = pair.first;
+			SSBO<unsigned int> &ssbo = pair.second;
+
+			SIZE = ssbo.size / 2 * 6;
+			ssbo.Bind();
+			Model::Render();
+		}
 	}
 };
 #endif

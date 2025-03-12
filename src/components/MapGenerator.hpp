@@ -23,7 +23,6 @@ class MapGenerator : public IComponent {
 
 	void Start() override {
 		Generate();
-		entity->GetComponent<Renderer>()->model.fillSSBO(entity->GetComponent<MapGenerator>()->tileVertices);
 	}
 
 	void Generate() {
