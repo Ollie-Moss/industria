@@ -15,7 +15,7 @@ class View {
 	int Height;
 	std::string Title;
 
-    Entity *Camera;
+	Entity *Camera;
 
 	void Init(std::string title, int width, int height);
 	bool ShouldQuit();
@@ -23,9 +23,9 @@ class View {
 	void ClearColor(glm::vec4 color);
 	void SwapBuffers();
 
+	glm::vec2 GetMousePosition();
 
-    glm::vec2 GetMousePosition();
-
+	static void FramebufferSizeCallback(GLFWwindow *window, int newWidth, int newHeight);
 };
 
 #endif

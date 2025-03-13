@@ -6,18 +6,10 @@
 #include <glm/ext/vector_int2.hpp>
 
 struct ChunkEntity : Entity {
-
 	ChunkEntity(glm::ivec2 position) {
-		AddComponent(new ChunkRenderer(new ChunkModel));
-		AddComponent(new ChunkTransform);
-		AddComponent(
-			new Chunk(
-				GetComponent<ChunkRenderer>(),
-				GetComponent<ChunkTransform>() //
-				));
-
-		GetComponent<ChunkTransform>()->position = position;
-
+		COMPONENT(ChunkRenderer(new ChunkModel));
+		COMPONENT(ChunkTransform(position));
+		COMPONENT(Chunk(GetComponent<ChunkRenderer>(), GetComponent<ChunkTransform>()));
 	};
 };
 

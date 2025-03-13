@@ -3,6 +3,8 @@
 
 class Entity;
 
+#define COMPONENT(component) AddComponent(new component)
+
 class IComponent {
   public:
 	Entity *entity = nullptr;

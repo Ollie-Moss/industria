@@ -10,15 +10,16 @@
 struct ChunkRenderer;
 
 struct Chunk : IComponent {
-	std::vector<TileEntity *> tiles;
 	ChunkTransform *transform;
 	ChunkRenderer *renderer;
+
+	std::vector<TileEntity *> tiles;
 	bool Generated = false;
 
 	Chunk(ChunkRenderer *renderer, ChunkTransform *transform) : renderer(renderer),
 																transform(transform) {};
 
-	void Generate();
+	void Generate(int scaleFactor = 1);
 
 	void Update() override;
 };

@@ -1,4 +1,5 @@
 #include "View.hpp"
+#include "Simplex.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -33,6 +34,13 @@ void View::Init(std::string title, int width, int height) {
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glfwSetFramebufferSizeCallback(window, View::FramebufferSizeCallback);
+}
+
+void View::FramebufferSizeCallback(GLFWwindow *window, int newWidth, int newHeight) {
+    Simplex::view.Width = newWidth;
+    Simplex::view.Height = newHeight;
+	glViewport(0, 0, Simplex::view.Width, Simplex::view.Height);
 }
 
 void View::ClearColor(glm::vec4 color) {
@@ -55,5 +63,5 @@ glm::vec2 View::GetMousePosition() {
 	double mouseX, mouseY;
 	glfwGetCursorPos(window, &mouseX, &mouseY);
 	glm::vec2 mousePos = glm::vec2((float)mouseX, Height - (float)mouseY);
-    return mousePos;
+	return mousePos;
 }

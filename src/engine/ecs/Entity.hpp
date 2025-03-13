@@ -5,6 +5,11 @@
 #include <vector>
 #include "IComponent.hpp"
 
+#define ENTITY(name, ...) \
+    Entity* name = new Entity; \
+    name->AddComponents({__VA_ARGS__}); \
+    entities.push_back(name);
+
 class Entity {
   public:
 	int ID;

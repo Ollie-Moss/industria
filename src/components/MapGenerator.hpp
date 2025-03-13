@@ -11,7 +11,7 @@
 #include "../entities/TileEntity.hpp"
 #include "TileTransform.hpp"
 
-#define CHUNK_SIZE 20 
+#define CHUNK_SIZE 20
 #define maxPrimeIndex 10
 
 static int numOctaves = 7;
@@ -33,7 +33,7 @@ static int primes[maxPrimeIndex][3] = {
 
 class MapGenerator {
   public:
-	static std::vector<TileEntity *> Generate(int chunkX = 0, int chunkY = 0, int scaleFactor = 0) {
+	static std::vector<TileEntity *> Generate(int chunkX = 0, int chunkY = 0, int scaleFactor = 1) {
 		std::vector<TileEntity *> tiles;
 		int startX = chunkX * CHUNK_SIZE;
 		int startY = chunkY * CHUNK_SIZE;
@@ -42,14 +42,15 @@ class MapGenerator {
 			(startY <= -2147483647 && startY + CHUNK_SIZE >= 2147483647))
 			return std::vector<TileEntity *>();
 
-		for (int y = startY; y < startY + CHUNK_SIZE; y++) {
-			for (int x = startX; x < startX + CHUNK_SIZE; x++) {
+        int increment = scaleFactor;
+
+		for (int y = startY; y < startY + CHUNK_SIZE; y+=increment) {
+			for (int x = startX; x < startX + CHUNK_SIZE; x+=increment) {
 				double noise = ValueNoise_2D(x + 2147483648, y + 2147483648);
 
 				if (noise < 0.2) {
-					TileEntity *tile = new TileEntity(new TileTexture);
-					tile->GetComponent<TileTexture>()->texture = "GRASS_TILE_1";
-					tile->GetComponent<TileTransform>()->position = glm::ivec3(x, y, 0);
+					TileEntity *tile = new TileEntity(glm::ivec3(x, y, 0), "GRASS_TILE_1");
+                    tile->GetComponent<TileTransform>()->size *= increment;
 					tiles.push_back(tile);
 				}
 			}

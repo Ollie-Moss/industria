@@ -6,6 +6,8 @@
 
 struct TileTexture : IComponent {
 	std::string texture = "";
+	TileTexture() {};
+	TileTexture(std::string texture) : texture(texture) {};
 };
 
 #endif

@@ -12,12 +12,6 @@ class Scene {
 
 	void Start();
 	void Update();
-
-	template <typename F, typename... Args>
-	void CreateScene(F function, Args &&...args) {
-		function(args...);
-	}
-
 };
 
 #endif
