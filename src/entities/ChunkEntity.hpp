@@ -2,17 +2,21 @@
 #define CHUNK_ENTITY_H
 
 #include "../engine/ecs/Entity.hpp"
-#include "ChunkRenderer.hpp"
+#include "../components/ChunkRenderer.hpp"
+#include <glm/ext/vector_int2.hpp>
 
 struct ChunkEntity : Entity {
-	ChunkEntity() {
+
+	ChunkEntity(glm::ivec2 position) {
 		AddComponent(new ChunkRenderer(new ChunkModel));
-		AddComponent(new Transform);
+		AddComponent(new ChunkTransform);
 		AddComponent(
 			new Chunk(
 				GetComponent<ChunkRenderer>(),
-				GetComponent<Transform>() //
+				GetComponent<ChunkTransform>() //
 				));
+
+		GetComponent<ChunkTransform>()->position = position;
 
 	};
 };

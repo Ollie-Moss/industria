@@ -2,8 +2,8 @@
 #define TILE_H
 
 #include "../engine/ecs/Entity.hpp"
-#include "TileTexture.hpp"
-#include "TileTransform.hpp"
+#include "../components/TileTexture.hpp"
+#include "../components/TileTransform.hpp"
 
 struct TileEntity : Entity {
 	TileEntity(TileTexture *texture) {

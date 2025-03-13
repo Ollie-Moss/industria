@@ -7,7 +7,7 @@
 
 struct TileTransform : IComponent {
 	glm::ivec3 position = glm::ivec3(0, 0, 0);
-	glm::ivec2 size = glm::ivec2(0, 0);
+	glm::ivec2 size = glm::ivec2(1, 1);
 };
 
 #endif

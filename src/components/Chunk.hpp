@@ -3,24 +3,24 @@
 
 #include "../engine/ecs/IComponent.hpp"
 #include "../engine/ecs/components/Transform.hpp"
-#include "TileEntity.hpp"
+#include "../entities/TileEntity.hpp"
+#include "ChunkTransform.hpp"
+#include "MapGenerator.hpp"
 
 struct ChunkRenderer;
 
 struct Chunk : IComponent {
 	std::vector<TileEntity *> tiles;
-	Transform *transform;
+	ChunkTransform *transform;
 	ChunkRenderer *renderer;
+	bool Generated = false;
 
-	Chunk(ChunkRenderer *renderer, Transform *transform) : renderer(renderer),
-														   transform(transform) {};
+	Chunk(ChunkRenderer *renderer, ChunkTransform *transform) : renderer(renderer),
+																transform(transform) {};
 
-	void Update() override {
-		for (auto tile : tiles) {
-			tile->UpdateComponents();
-		}
-	}
+	void Generate();
+
+	void Update() override;
 };
-
 
 #endif

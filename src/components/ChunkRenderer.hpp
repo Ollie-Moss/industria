@@ -4,7 +4,7 @@
 #include "../engine/ecs/IComponent.hpp"
 #include "../engine/utils/Model.hpp"
 #include "Chunk.hpp"
-#include "TileEntity.hpp"
+#include "../entities/TileEntity.hpp"
 #include "TileTexture.hpp"
 #include "TileTransform.hpp"
 #include <cstddef>
@@ -45,11 +45,8 @@ struct ChunkRenderer : IComponent {
 	std::vector<unsigned int> TileToVertices(TileEntity *tile) {
 		TileTransform *transform = tile->GetComponent<TileTransform>();
 
-		unsigned int vertex1 = (static_cast<uint32_t>(transform->position.x)) |
-							   (static_cast<uint32_t>(transform->position.y) << 16);
-		unsigned int vertex2 = (static_cast<uint32_t>(transform->position.z)) |
-							   (static_cast<uint32_t>(transform->size.x << 16)) |
-							   (static_cast<uint32_t>(transform->size.y << 24));
+		unsigned int vertex1 = (int(transform->position.x) & 0xFFFF) | (int(transform->position.y) << 16);
+		unsigned int vertex2 = (int(transform->position.z) & 0xFFFF) | (int(transform->size.x) << 16) | (int(transform->size.y) << 24);
 		return {vertex1, vertex2};
 	}
 

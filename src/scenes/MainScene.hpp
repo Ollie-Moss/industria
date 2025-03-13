@@ -3,7 +3,7 @@
 #include "../engine/ecs/components/Camera.hpp"
 #include "../components/MapGenerator.hpp"
 #include "../engine/Userinterface.hpp"
-
+#include "../components/Map.hpp"
 #include <vector>
 
 // Main ENTITY macro
@@ -16,7 +16,8 @@ struct MainScene : public Scene {
 	MainScene() {
 		CreateScene([&]() {
 
-			ENTITY(tile, new Renderer, new MapGenerator(100, 100));
+			ENTITY(map, new Map);
+
 			ENTITY(cameraEntity, new Transform, new Camera);
 		});
 	}

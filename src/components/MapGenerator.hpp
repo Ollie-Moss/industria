@@ -4,64 +4,61 @@
 #include <cmath>
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float3.hpp>
+#include <glm/ext/vector_int3.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <vector>
-#include "../engine/ecs/IComponent.hpp"
-#include "../engine/ecs/Entity.hpp"
-#include "../engine/ecs/components/Renderer.hpp"
+#include "../components/TileTexture.hpp"
+#include "../entities/TileEntity.hpp"
+#include "TileTransform.hpp"
 
+#define CHUNK_SIZE 20 
 #define maxPrimeIndex 10
 
-class MapGenerator : public IComponent {
+static int numOctaves = 7;
+static double persistence = 0.68;
+
+static int primeIndex = 0;
+
+static int primes[maxPrimeIndex][3] = {
+	{995615039, 600173719, 701464987},
+	{831731269, 162318869, 136250887},
+	{174329291, 946737083, 245679977},
+	{362489573, 795918041, 350777237},
+	{457025711, 880830799, 909678923},
+	{787070341, 177340217, 593320781},
+	{405493717, 291031019, 391950901},
+	{458904767, 676625681, 424452397},
+	{531736441, 939683957, 810651871},
+	{997169939, 842027887, 423882827}};
+
+class MapGenerator {
   public:
-	int numX, numY;
-	int numOctaves = 7;
-	double persistence = 0.68;
-	std::vector<unsigned int> tileVertices;
+	static std::vector<TileEntity *> Generate(int chunkX = 0, int chunkY = 0, int scaleFactor = 0) {
+		std::vector<TileEntity *> tiles;
+		int startX = chunkX * CHUNK_SIZE;
+		int startY = chunkY * CHUNK_SIZE;
 
-	MapGenerator(int numX, int numY) : numX(numX), numY(numY) {};
+		if ((startX <= -2147483647 && startX + CHUNK_SIZE >= 2147483647) ||
+			(startY <= -2147483647 && startY + CHUNK_SIZE >= 2147483647))
+			return std::vector<TileEntity *>();
 
-	void Start() override {
-		Generate();
-	}
+		for (int y = startY; y < startY + CHUNK_SIZE; y++) {
+			for (int x = startX; x < startX + CHUNK_SIZE; x++) {
+				double noise = ValueNoise_2D(x + 2147483648, y + 2147483648);
 
-	void Generate() {
-		for (int y = 0; y < numY; y++) {
-			for (int x = 0; x < numX; x++) {
-				double noise = ValueNoise_2D(x, y);
-
-				// std::cout << noise << std::endl;
-				if (noise > 0.3) {
-					continue;
-				} else {
-					unsigned int vertex1 = (static_cast<uint32_t>(x)) |
-										   (static_cast<uint32_t>(y) << 16);
-					unsigned int vertex2 = (static_cast<uint32_t>(0)) |
-										   (static_cast<uint32_t>(1 << 16)) |
-										   (static_cast<uint32_t>(1 << 24));
-					tileVertices.push_back(vertex1);
-					tileVertices.push_back(vertex2);
+				if (noise < 0.2) {
+					TileEntity *tile = new TileEntity(new TileTexture);
+					tile->GetComponent<TileTexture>()->texture = "GRASS_TILE_1";
+					tile->GetComponent<TileTransform>()->position = glm::ivec3(x, y, 0);
+					tiles.push_back(tile);
 				}
 			}
 		}
+		return tiles;
 	};
 
   private:
-	int primeIndex = 0;
-
-	int primes[maxPrimeIndex][3] = {
-		{995615039, 600173719, 701464987},
-		{831731269, 162318869, 136250887},
-		{174329291, 946737083, 245679977},
-		{362489573, 795918041, 350777237},
-		{457025711, 880830799, 909678923},
-		{787070341, 177340217, 593320781},
-		{405493717, 291031019, 391950901},
-		{458904767, 676625681, 424452397},
-		{531736441, 939683957, 810651871},
-		{997169939, 842027887, 423882827}};
-
-	double Noise(int i, int x, int y) {
+	static double Noise(int i, int x, int y) {
 		int n = x + y * 57;
 		n = (n << 13) ^ n;
 		int a = primes[i][0], b = primes[i][1], c = primes[i][2];
@@ -69,7 +66,7 @@ class MapGenerator : public IComponent {
 		return 1.0 - (double)(t) / 1073741824.0;
 	}
 
-	double SmoothedNoise(int i, int x, int y) {
+	static double SmoothedNoise(int i, int x, int y) {
 		double corners = (Noise(i, x - 1, y - 1) + Noise(i, x + 1, y - 1) +
 						  Noise(i, x - 1, y + 1) + Noise(i, x + 1, y + 1)) /
 						 16,
@@ -80,13 +77,13 @@ class MapGenerator : public IComponent {
 		return corners + sides + center;
 	}
 
-	double Interpolate(double a, double b, double x) { // cosine interpolation
+	static double Interpolate(double a, double b, double x) { // cosine interpolation
 		double ft = x * 3.1415927,
 			   f = (1 - cos(ft)) * 0.5;
 		return a * (1 - f) + b * f;
 	}
 
-	double InterpolatedNoise(int i, double x, double y) {
+	static double InterpolatedNoise(int i, double x, double y) {
 		int integer_X = x;
 		double fractional_X = x - integer_X;
 		int integer_Y = y;
@@ -101,7 +98,7 @@ class MapGenerator : public IComponent {
 		return Interpolate(i1, i2, fractional_Y);
 	}
 
-	double ValueNoise_2D(double x, double y) {
+	static double ValueNoise_2D(double x, double y) {
 		double total = 0,
 			   frequency = pow(2, numOctaves),
 			   amplitude = 1;

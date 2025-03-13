@@ -2,6 +2,7 @@
 #define MODEL_H
 
 #include "Buffer.hpp"
+#include "../ecs/components/Camera.hpp"
 #include "../ResourceManager.hpp"
 #include "SSBOBuffer.hpp"
 #include "Shader.hpp"
@@ -104,9 +105,22 @@ struct ChunkModel : Model {
 			std::string textureName = pair.first;
 			SSBO<unsigned int> &ssbo = pair.second;
 
+			Shader shader = ResourceManager::GetShader("SpriteShader");
+			shader.use();
+
 			SIZE = ssbo.size / 2 * 6;
 			ssbo.Bind();
-			Model::Render();
+
+			glm::mat4 projection = Simplex::view.Camera->GetComponent<Camera>()->CalculateProjection();
+
+			shader.setVec4("color", glm::vec4(0.0, 0.0, 0.0, 0.0));
+			shader.setMat4("projection", projection);
+
+			glActiveTexture(GL_TEXTURE0);
+			ResourceManager::GetTexture(textureName).Bind();
+			Model::Render(GL_TRIANGLES);
+
+			glBindTexture(GL_TEXTURE0, 0);
 		}
 	}
 };
